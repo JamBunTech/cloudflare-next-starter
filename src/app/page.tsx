@@ -1,8 +1,11 @@
 'use client';
 
-import { Github, Package } from 'lucide-react';
+import { createAuthClient } from 'better-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+
+const { useSession } = createAuthClient();
+
 import authClient from '@/auth/auth-client';
 import { Button } from '@/components/ui/button';
 import {
@@ -15,7 +18,7 @@ import {
 } from '@/components/ui/card';
 
 export default function Home() {
-  const { data: session, error: sessionError } = authClient.useSession();
+  const { data: session, error: sessionError } = useSession();
   const [isAuthActionInProgress, setIsAuthActionInProgress] = useState(false);
   const router = useRouter();
 
@@ -78,31 +81,6 @@ export default function Home() {
           </Button>
         </CardFooter>
       </Card>
-      <footer className="absolute bottom-0 w-full py-4 text-center text-gray-500 text-sm">
-        <div className="space-y-3">
-          <div>Powered by better-auth-cloudflare</div>
-          <div className="flex items-center justify-center gap-4">
-            <a
-              className="flex items-center gap-1 transition-colors hover:text-gray-700"
-              href="https://github.com/zpg6/better-auth-cloudflare"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              <Github size={16} />
-              <span>GitHub</span>
-            </a>
-            <a
-              className="flex items-center gap-1 transition-colors hover:text-gray-700"
-              href="https://www.npmjs.com/package/better-auth-cloudflare"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              <Package size={16} />
-              <span>npm</span>
-            </a>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
