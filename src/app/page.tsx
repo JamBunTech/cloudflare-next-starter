@@ -1,102 +1,107 @@
-import Image from 'next/image';
+'use client';
+
+import { Github, Package } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import authClient from '@/auth/auth-client';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 
 export default function Home() {
-  return (
-    <div className="grid min-h-screen grid-rows-[20px_1fr_20px] items-center justify-items-center gap-16 p-8 pb-20 font-[family-name:var(--font-geist-sans)] sm:p-20">
-      <main className="row-start-2 flex flex-col items-center gap-[32px] sm:items-start">
-        <Image
-          alt="Next.js logo"
-          className="dark:invert"
-          height={38}
-          priority
-          src="/next.svg"
-          width={180}
-        />
-        <ol className="list-inside list-decimal text-center font-[family-name:var(--font-geist-mono)] text-sm/6 sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{' '}
-            <code className="rounded bg-black/[.05] px-1 py-0.5 font-[family-name:var(--font-geist-mono)] font-semibold dark:bg-white/[.06]">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const { data: session, error: sessionError } = authClient.useSession();
+  const [isAuthActionInProgress, setIsAuthActionInProgress] = useState(false);
+  const router = useRouter();
 
-        <div className="flex flex-col items-center gap-4 sm:flex-row">
-          <a
-            className="flex h-10 items-center justify-center gap-2 rounded-full border border-transparent border-solid bg-foreground px-4 font-medium text-background text-sm transition-colors hover:bg-[#383838] sm:h-12 sm:w-auto sm:px-5 sm:text-base dark:hover:bg-[#ccc]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            rel="noopener noreferrer"
-            target="_blank"
+  // Redirect to dashboard if already logged in
+  useEffect(() => {
+    if (session) {
+      router.push('/dashboard');
+    }
+  }, [session, router]);
+
+  const handleAnonymousLogin = async () => {
+    setIsAuthActionInProgress(true);
+    try {
+      const result = await authClient.signIn.anonymous();
+      // biome-ignore lint/suspicious/noConsole: log anonymous login result
+      console.log('Anonymous login result:', result);
+
+      if (result.error) {
+        setIsAuthActionInProgress(false);
+        alert(`Anonymous login failed: ${result.error.message}`);
+      } else {
+        // Login succeeded, redirect to dashboard
+        // Don't reset loading state here - let the redirect happen
+        window.location.href = '/dashboard';
+      }
+      // biome-ignore lint/suspicious/noExplicitAny: any
+    } catch (e: any) {
+      setIsAuthActionInProgress(false);
+      alert(`An unexpected error occurred during login: ${e.message}`);
+    }
+  };
+
+  if (sessionError) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <p>Error loading session: {sessionError.message}</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex min-h-screen items-center justify-center p-8 font-[family-name:var(--font-geist-sans)]">
+      <Card className="w-full max-w-sm">
+        <CardHeader>
+          <CardTitle className="text-2xl">Login</CardTitle>
+          <CardDescription>Powered by better-auth-cloudflare.</CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-4">
+          <p className="text-center text-gray-600 text-sm">
+            No personal information required.
+          </p>
+        </CardContent>
+        <CardFooter>
+          <Button
+            className="w-full"
+            disabled={isAuthActionInProgress}
+            onClick={handleAnonymousLogin}
           >
-            <Image
-              alt="Vercel logomark"
-              className="dark:invert"
-              height={20}
-              src="/vercel.svg"
-              width={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="flex h-10 w-full items-center justify-center rounded-full border border-black/[.08] border-solid px-4 font-medium text-sm transition-colors hover:border-transparent hover:bg-[#f2f2f2] sm:h-12 sm:w-auto sm:px-5 sm:text-base md:w-[158px] dark:border-white/[.145] dark:hover:bg-[#1a1a1a]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Read our docs
-          </a>
+            {isAuthActionInProgress ? 'Logging In...' : 'Login Anonymously'}
+          </Button>
+        </CardFooter>
+      </Card>
+      <footer className="absolute bottom-0 w-full py-4 text-center text-gray-500 text-sm">
+        <div className="space-y-3">
+          <div>Powered by better-auth-cloudflare</div>
+          <div className="flex items-center justify-center gap-4">
+            <a
+              className="flex items-center gap-1 transition-colors hover:text-gray-700"
+              href="https://github.com/zpg6/better-auth-cloudflare"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <Github size={16} />
+              <span>GitHub</span>
+            </a>
+            <a
+              className="flex items-center gap-1 transition-colors hover:text-gray-700"
+              href="https://www.npmjs.com/package/better-auth-cloudflare"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <Package size={16} />
+              <span>npm</span>
+            </a>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex flex-wrap items-center justify-center gap-[24px]">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          <Image
-            alt="File icon"
-            aria-hidden
-            height={16}
-            src="/file.svg"
-            width={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          <Image
-            alt="Window icon"
-            aria-hidden
-            height={16}
-            src="/window.svg"
-            width={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          <Image
-            alt="Globe icon"
-            aria-hidden
-            height={16}
-            src="/globe.svg"
-            width={16}
-          />
-          Go to nextjs.org →
-        </a>
       </footer>
     </div>
   );

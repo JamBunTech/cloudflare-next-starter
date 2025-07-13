@@ -14,7 +14,28 @@
   },
   "observability": {
     "enabled": true
-  }
+  },
+  "d1_databases": [
+    {
+      "binding": "DATABASE",
+      "database_name": "database-name",
+      "database_id": "database-id",
+      "migrations_dir": "drizzle",
+      "migrations_table": "__drizzle_migrations"
+    }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "USER_SESSIONS",
+      "id": "user-sessions-id"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "R2_BUCKET",
+      "bucket_name": "bucket-name"
+    }
+  ]
   /**
    * Smart Placement
    * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
