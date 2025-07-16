@@ -10,5 +10,5 @@
 - **📝 Biome** - Fast linting and formatting
 - **🎯 Ultracite** - Enhanced code quality rules
 - **🔒 Lefthook** - Git hooks for code quality
-- **📦 pnpm** - Fast, disk space efficient package manager
+- **📦 npm** - Package manager
 - **🔒 BetterAuth** - Authenication with [BetterAuth](https://www.better-auth.com/) and [BetterAuthCloudflare](https://github.com/zpg6/better-auth-cloudflare)

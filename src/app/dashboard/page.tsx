@@ -14,6 +14,7 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import SignOutButton from '@/app/dashboard/signout-button'; // Import the client component
 import { initAuth } from '@/auth';
+import FileUploadDemo from '@/components/FileUploadDemo';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
@@ -196,6 +197,9 @@ export default async function DashboardPage() {
                     )}
                 </CardContent>
               </Card>
+            </TabsContent>
+            <TabsContent className="space-y-6" value="upload">
+              <FileUploadDemo />
             </TabsContent>
           </Tabs>
         </div>
